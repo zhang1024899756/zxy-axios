@@ -12,5 +12,5 @@ export function isDate(val: any): val is Date {
 // 只识别普通 JSON 对象
 // 对于 FormData、ArrayBuffer 这些类型不做处理
 export function isPlainObject(val: any): val is Object {
-  return toString.call(val) === '[object Object]'
+  return toString.call(val) === '[object Object]' || toString.call(val) === '[object String]'
 }
