@@ -27,35 +27,8 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 
-
-//路由
-const router = express.Router()
-
-router.get('/simple/get', function(req, res) {
-  res.json({
-    msg: `hello world`
-  })
-})
-router.get('/base/get', function(req, res) {
-  res.json(req.query)
-})
-router.post('/base/post', function(req, res) {
-  res.json(req.body)
-})
-router.post('/base/buffer', function(req, res) {
-  let msg = []
-  req.on('data', (chunk) => {
-    if (chunk) {
-      msg.push(chunk)
-    }
-  })
-  req.on('end', () => {
-    let buf = Buffer.concat(msg)
-    res.json(buf.toJSON())
-  })
-})
-//注册路由
-app.use(router)
+//指定路由配置文件
+app.use(require('./router'));
 
 
 
