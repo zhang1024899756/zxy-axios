@@ -1,14 +1,11 @@
-import DummyClass from "../src/zxy-axios"
+import { isDate } from '../src/helpers/util'
 
 /**
  * Dummy test
  */
-describe("Dummy test", () => {
-  it("works if true is truthy", () => {
-    expect(true).toBeTruthy()
-  })
-
-  it("DummyClass is instantiable", () => {
-    expect(new DummyClass()).toBeInstanceOf(DummyClass)
+describe('Dummy test', () => {
+  test('should validate Date', () => {
+    expect(isDate(new Date())).toBeTruthy()
+    expect(isDate(Date.now())).toBeFalsy()
   })
 })
