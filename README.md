@@ -7,7 +7,7 @@
 [![Dev Dependencies](https://david-dm.org/alexjoverm/typescript-library-starter/dev-status.svg)](https://david-dm.org/alexjoverm/typescript-library-starter?type=dev)
 [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/AJoverMorales)
 
-一款实现了全部浏览器端axios官方库功能的HTTP库.
+一款全新重构实现了全部浏览器端axios官方库功能的HTTP库.
 
 
 ### Usage
