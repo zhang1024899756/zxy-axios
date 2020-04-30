@@ -5,7 +5,7 @@
   "keywords": [],
   "main": "dist/zxy-axios.umd.js",
   "module": "dist/zxy-axios.es5.js",
-  "typings": "dist/types/zxy-axios.d.ts",
+  "typings": "dist/types/index.d.ts",
   "files": [
     "dist"
   ],

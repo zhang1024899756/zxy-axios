@@ -48,3 +48,13 @@ export function deepMerge(...objs: any[]): any {
 
   return result
 }
+
+// 如果请求的数据是 FormData 类型
+export function isFormData(val: any): boolean {
+  return typeof val !== 'undefined' && val instanceof FormData
+}
+
+// 判断URLSearchParams 对象实例
+export function isURLSearchParams(val: any): val is URLSearchParams {
+  return typeof val !== 'undefined' && val instanceof URLSearchParams
+}

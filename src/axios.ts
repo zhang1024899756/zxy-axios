@@ -1,10 +1,13 @@
-import { AxiosInstance, AxiosRequestConfig } from './type'
+import { AxiosRequestConfig, AxiosStatic } from './type'
 import Axios from './core/Axios'
 import { extend } from './helpers/util'
 import defaults from './defaults'
+import mergeConfig from './core/mergeConfig'
+import CancelToken from './cancel/CancelToken'
+import Cancel, { isCancel } from './cancel/Cancel'
 
 // createInstance 工厂函数
-function createInstance(config: AxiosRequestConfig): AxiosInstance {
+function createInstance(config: AxiosRequestConfig): AxiosStatic {
   const context = new Axios(config)
   // 创建instance 指向 Axios.prototype.request 方法，并绑定了上下文 context
   const instance = Axios.prototype.request.bind(context)
@@ -16,9 +19,29 @@ function createInstance(config: AxiosRequestConfig): AxiosInstance {
 
   // 由于这里 TypeScript 不能正确推断 instance 的类型
   // 这里做一下类型断言
-  return instance as AxiosInstance
+  return instance as AxiosStatic
 }
 
 const axios = createInstance(defaults)
+
+axios.create = function create(config) {
+  return createInstance(mergeConfig(defaults, config))
+}
+
+axios.all = function all(promises) {
+  return Promise.all(promises)
+}
+
+axios.spread = function spread(callback) {
+  return function wrap(arr) {
+    return callback.apply(null, arr)
+  }
+}
+
+axios.CancelToken = CancelToken
+axios.Cancel = Cancel
+axios.isCancel = isCancel
+
+axios.Axios = Axios
 
 export default axios

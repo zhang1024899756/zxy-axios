@@ -17,6 +17,7 @@ export type Method =
 // 定义请求参数的接口类型
 // @XMLHttpRequestResponseType 类型定义是 "" | "arraybuffer" | "blob" | "document" | "json" | "text" 字符串字面量类型
 export interface AxiosRequestConfig {
+  baseURL?: string
   url?: string
   method?: Method
   data?: any
@@ -25,11 +26,17 @@ export interface AxiosRequestConfig {
   responseType?: XMLHttpRequestResponseType
   timeout?: number
   withCredentials?: boolean
-  xsrfCookieName?: string
-  xsrfHeaderName?: string
   [propName: string]: any
   transformRequest?: AxiosTransformer | AxiosTransformer[]
   transformResponse?: AxiosTransformer | AxiosTransformer[]
+  cancelToken?: CancelToken
+  xsrfCookieName?: string
+  xsrfHeaderName?: string
+  onDownloadProgress?: (e: ProgressEvent) => void
+  onUploadProgress?: (e: ProgressEvent) => void
+  auth?: AxiosBasicCredentials
+  validateStatus?: (status: number) => boolean
+  paramsSerializer?: (params: any) => string
 }
 
 // 定义响应参数的接口类型
@@ -76,6 +83,8 @@ export interface Axios {
   put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T>
 
   patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise<T>
+
+  getUri(config?: AxiosRequestConfig): string
 }
 
 export interface AxiosInstance extends Axios {
@@ -99,4 +108,59 @@ export interface RejectedFn {
 
 export interface AxiosTransformer {
   (data: any, headers?: any): any
+}
+
+// 处理多实例，所以扩展静态接口
+export interface AxiosStatic extends AxiosInstance {
+  create(config?: AxiosRequestConfig): AxiosInstance
+
+  CancelToken: CancelTokenStatic
+  Cancel: CancelStatic
+  isCancel: (value: any) => boolean
+
+  all<T>(promises: Array<T | Promise<T>>): Promise<T[]>
+  spread<T, R>(callback: (...args: T[]) => R): (arr: T[]) => R
+  Axios: AxiosClassStatic
+}
+
+// 取消请求
+export interface CancelToken {
+  promise: Promise<Cancel>
+  reason?: Cancel
+
+  throwIfRequested(): void
+}
+export interface Canceler {
+  (message?: string): void
+}
+export interface CancelExecutor {
+  (cancel: Canceler): void
+}
+
+// CancelTokenSource 作为 CancelToken 类静态方法 source 函数的返回值类型，
+// CancelTokenStatic 则作为 CancelToken 类的类类型
+export interface CancelTokenSource {
+  token: CancelToken
+  cancel: Canceler
+}
+export interface CancelTokenStatic {
+  new (executor: CancelExecutor): CancelToken
+
+  source(): CancelTokenSource
+}
+
+export interface Cancel {
+  message?: string
+}
+export interface CancelStatic {
+  new (message?: string): Cancel
+}
+
+export interface AxiosBasicCredentials {
+  username: string
+  password: string
+}
+
+export interface AxiosClassStatic {
+  new (config: AxiosRequestConfig): Axios
 }
