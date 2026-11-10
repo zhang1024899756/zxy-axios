@@ -122,6 +122,12 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
           headers[xsrfHeaderName!] = xsrfValue
         }
       }
+      // 配置 auth 属性
+      // 值为 Basic 加密串。 这里的加密串是 username:password base64 加密
+      // 必须写在下面的 setRequestHeader 循环之前，否则永远不会真正下发
+      if (auth) {
+        headers['Authorization'] = 'Basic ' + btoa(auth.username + ':' + auth.password)
+      }
       // 传入的 data 为空的时候，请求 header 配置 Content-Type 是没有意义的，把它删除
       Object.keys(headers).forEach(name => {
         if (data === null && name.toLowerCase() === 'content-type') {
@@ -130,11 +136,6 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
           request.setRequestHeader(name, headers[name])
         }
       })
-      // 配置 auth 属性
-      // 值为 Basic 加密串。 这里的加密串是 username:password base64 加密
-      if (auth) {
-        headers['Authorization'] = 'Basic ' + btoa(auth.username + ':' + auth.password)
-      }
     }
 
     function processCancel(): void {

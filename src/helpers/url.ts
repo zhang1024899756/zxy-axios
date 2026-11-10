@@ -93,15 +93,24 @@ export function buildURL(
 // 然后设置 href 属性为我们传入的 url，然后可以获取该 DOM 的 protocol、host。
 // 当前页面的 url 和请求的 url 都通过这种方式获取，然后对比它们的 protocol 和 host 是否相同
 export function isURLSameOrigin(requestURL: string): boolean {
+  // 非浏览器环境（SSR、Node、单元测试）没有 document，按跨域处理而不是抛错
+  if (typeof document === 'undefined' || typeof window === 'undefined') {
+    return false
+  }
   const parsedOrigin = resolveURL(requestURL)
+  const currentOrigin = resolveURL(window.location.href)
   return (
     parsedOrigin.protocol === currentOrigin.protocol && parsedOrigin.host === currentOrigin.host
   )
 }
-const urlParsingNode = document.createElement('a')
-const currentOrigin = resolveURL(window.location.href)
+
+// 延迟创建 a 标签：模块加载阶段就访问 document 会让 SSR / Node 环境直接报错
+let urlParsingNode: HTMLAnchorElement | null = null
 
 function resolveURL(url: string): URLOrigin {
+  if (!urlParsingNode) {
+    urlParsingNode = document.createElement('a')
+  }
   urlParsingNode.setAttribute('href', url)
   const { protocol, host } = urlParsingNode
 
@@ -113,7 +122,7 @@ function resolveURL(url: string): URLOrigin {
 
 // 判断是否是绝对URL
 export function isAbsoluteURL(url: string): boolean {
-  return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url)
+  return /^([a-z][a-z\d+.-]*:)?\/\//i.test(url)
 }
 // 拼接URL
 export function combineURL(baseURL: string, relativeURL?: string): string {

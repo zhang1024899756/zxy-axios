@@ -2,7 +2,7 @@ import { CancelExecutor, CancelTokenSource, Canceler } from '../type'
 import Cancel from './Cancel'
 
 interface ResolvePromise {
-  (reason?: Cancel): void
+  (reason: Cancel): void
 }
 
 // CancelToken 构造函数内部，实例化一个 pending 状态的 Promise 对象，

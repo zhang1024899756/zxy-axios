@@ -7,11 +7,10 @@ const strats = Object.create(null)
 function defaultStrat(val1: any, val2: any): any {
   return typeof val2 !== 'undefined' ? val2 : val1
 }
-// 合并策略: 只接受自定义配置
+// 合并策略: 优先采用自定义配置，自定义配置缺失时回退到默认配置
+// （url / params / data 不做深合并，避免默认值把调用方的值覆盖成对象合并结果）
 function fromVal2Strat(val1: any, val2: any): any {
-  if (typeof val2 !== 'undefined') {
-    return val2
-  }
+  return typeof val2 !== 'undefined' ? val2 : val1
 }
 // 复杂的header合并策略
 function deepMergeStrat(val1: any, val2: any): any {
@@ -46,11 +45,11 @@ export default function mergeConfig(
 
   const config = Object.create(null)
 
-  for (let key in config2) {
+  for (const key in config2) {
     mergeField(key)
   }
 
-  for (let key in config1) {
+  for (const key in config1) {
     if (!config2[key]) {
       mergeField(key)
     }

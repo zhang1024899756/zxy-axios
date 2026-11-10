@@ -12,8 +12,7 @@ export function isObject(val: any): val is Object {
 // 只识别普通 JSON 对象
 // 对于 FormData、ArrayBuffer 这些类型不做处理
 export function isPlainObject(val: any): val is Object {
-  console.log('toString.call(val)', toString.call(val), val)
-  return toString.call(val) === '[object Object]' || toString.call(val) === '[object String]'
+  return toString.call(val) === '[object Object]'
 }
 
 // 辅助函数 extend

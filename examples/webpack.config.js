@@ -4,6 +4,7 @@ const webpack = require('webpack')
 
 module.exports = {
   mode: 'development',
+  devtool: 'eval-source-map',
 
   /**
    * 会在 examples 目录下建多个子目录
@@ -11,13 +12,17 @@ module.exports = {
    * 每个子目录的下会创建一个 app.ts
    * app.ts 作为 webpack 构建的入口文件
    * entries 收集了多目录个入口文件，并且每个入口还引入了一个用于热更新的文件
-   * entries 是一个对象，key 为目录名
    */
   entry: fs.readdirSync(__dirname).reduce((entries, dir) => {
     const fullDir = path.join(__dirname, dir)
+
+    if (!fs.statSync(fullDir).isDirectory()) {
+      return entries
+    }
+
     const entry = path.join(fullDir, 'app.ts')
-    if (fs.statSync(fullDir).isDirectory() && fs.existsSync(entry)) {
-      entries[dir] = ['webpack-hot-middleware/client', entry]
+    if (fs.existsSync(entry)) {
+      entries[dir] = ['webpack-hot-middleware/client?reload=true', entry]
     }
 
     return entries
@@ -34,15 +39,6 @@ module.exports = {
 
   module: {
     rules: [
-      {
-        test: /\.ts$/,
-        enforce: 'pre',
-        use: [
-          {
-            loader: 'tslint-loader'
-          }
-        ]
-      },
       {
         test: /\.tsx?$/,
         use: [
@@ -62,7 +58,6 @@ module.exports = {
   },
 
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin()
+    new webpack.HotModuleReplacementPlugin()
   ]
 }

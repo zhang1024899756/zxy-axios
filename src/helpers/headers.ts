@@ -28,13 +28,18 @@ export function processHeaders(headers: any, data: any): any {
 }
 
 export function parseHeaders(headers: string): any {
-  let parsed = Object.create(null)
+  const parsed = Object.create(null)
   if (!headers) {
     return parsed
   }
 
   headers.split('\r\n').forEach(line => {
-    let [key, val] = line.split(':')
+    // 只按第一个冒号切分，避免把 http:// 这类值从中间截断
+    const separatorIndex = line.indexOf(':')
+    let key = separatorIndex === -1 ? line : line.slice(0, separatorIndex)
+    let val: string | undefined =
+      separatorIndex === -1 ? undefined : line.slice(separatorIndex + 1)
+
     key = key.trim().toLowerCase()
     if (!key) {
       return
